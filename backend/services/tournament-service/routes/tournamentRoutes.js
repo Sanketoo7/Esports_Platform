@@ -5,16 +5,18 @@ import {
   joinTournament,
   manageParticipants,
 } from "../controllers/tournamentController.js";
-import { protect } from "../../../middleware/authMiddleware.js";
+import { protect, admin } from "../../../middleware/authMiddleware.js"; // ✅ single import
 
 const router = express.Router();
 
 // Public
 router.get("/", listTournaments);
 
-// Protected
-router.post("/", protect, createTournament); // admin only
+// Protected (players + admins)
 router.post("/:id/join", protect, joinTournament);
-router.get("/:id/participants", protect, manageParticipants); // admin only
+
+// Admin only
+router.get("/:id/participants", protect, admin, manageParticipants); 
+router.post("/", protect, admin, createTournament);
 
 export default router;

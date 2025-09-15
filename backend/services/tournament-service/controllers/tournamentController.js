@@ -1,58 +1,58 @@
 import Tournament from "../models/Tournament.js";
 
-// ✅ Create a tournament (Admin only)
+// ✅ Create tournament (admin only)
 export const createTournament = async (req, res) => {
   try {
-    if (!req.user || req.user.role !== "admin") {
+    if (req.user.role !== "admin") {
       return res.status(403).json({ message: "Only admins can create tournaments ❌" });
     }
 
-    const { name, game, description, startDate, endDate } = req.body;
+    const { name, game, date, maxPlayers } = req.body;
 
     const tournament = await Tournament.create({
       name,
       game,
-      description,
-      startDate,
-      endDate,
+      date,
+      maxPlayers,
       createdBy: req.user._id,
     });
 
     res.status(201).json({ message: "Tournament created ✅", tournament });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
 
 // ✅ List tournaments (public)
 export const listTournaments = async (req, res) => {
   try {
-    const tournaments = await Tournament.find().populate("createdBy", "username email");
+    const tournaments = await Tournament.find().populate("participants", "username email");
     res.json(tournaments);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
 
-// ✅ Join a tournament (Player with token)
+// ✅ Join tournament (players only)
 export const joinTournament = async (req, res) => {
   try {
-    const { id } = req.params;
-    const tournament = await Tournament.findById(id);
+    const tournament = await Tournament.findById(req.params.id);
     if (!tournament) return res.status(404).json({ message: "Tournament not found ❌" });
 
-    // Prevent duplicate join
-    const alreadyJoined = tournament.participants.find(
-      (p) => p.userId.toString() === req.user._id.toString()
-    );
-    if (alreadyJoined) return res.status(400).json({ message: "Already joined ❌" });
+    if (tournament.participants.includes(req.user._id)) {
+      return res.status(400).json({ message: "Already joined this tournament ❌" });
+    }
 
-    tournament.participants.push({ userId: req.user._id, username: req.user.username });
+    if (tournament.participants.length >= tournament.maxPlayers) {
+      return res.status(400).json({ message: "Tournament is full ❌" });
+    }
+
+    tournament.participants.push(req.user._id);
     await tournament.save();
 
     res.json({ message: "Joined tournament ✅", tournament });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
 
