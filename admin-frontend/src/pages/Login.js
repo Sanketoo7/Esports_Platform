@@ -1,42 +1,67 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const Login = ({ setToken }) => {
+function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
+
     try {
       const res = await axios.post("http://localhost:4000/api/users/login", {
         email,
         password,
       });
-      setToken(res.data.token);
-      alert("Login successful ✅");
-    } catch (error) {
-      alert("Login failed ❌");
+
+      // Save token to localStorage
+      localStorage.setItem("token", res.data.token);
+
+      // Redirect to dashboard
+      navigate("/dashboard");
+    } catch (err) {
+      setError("Invalid email or password ❌");
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <div style={{ maxWidth: "400px", margin: "100px auto" }}>
       <h2>Admin Login</h2>
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <button type="submit">Login</button>
-    </form>
+      {error && <p style={{ color: "red" }}>{error}</p>}
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label>Email:</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            style={{ width: "100%", padding: "8px", marginBottom: "10px" }}
+          />
+        </div>
+        <div>
+          <label>Password:</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            style={{ width: "100%", padding: "8px", marginBottom: "10px" }}
+          />
+        </div>
+        <button
+          type="submit"
+          style={{ width: "100%", padding: "10px", background: "#007bff", color: "#fff", border: "none" }}
+        >
+          Login
+        </button>
+      </form>
+    </div>
   );
-};
+}
 
 export default Login;

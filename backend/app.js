@@ -10,10 +10,15 @@ const app = express();
 
 // Middleware
 app.use(express.json());
+app.use(cors());  
 
 // Routes
+app.get("/", (req, res) => {
+  res.send("Backend API is running ✅");
+});
 app.use("/api/users", userRoutes);
 app.use("/api/tournaments", tournamentRoutes);
+app.use("/api/admin", adminAuthRoutes); 
 
 // DB + Server
 const PORT = process.env.PORT || 4000;
