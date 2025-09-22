@@ -1,13 +1,18 @@
-import React from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import AppNavigator from './src/navigation/AppNavigator';
+// App.js
+import React, { useState, createContext } from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import AppNavigator from "./src/navigation/AppNavigator";
+
+export const AuthContext = createContext();
 
 export default function App() {
+  const [user, setUser] = useState(null);
+
   return (
-    <SafeAreaProvider>
-      <StatusBar style="auto" />
-      <AppNavigator />
-    </SafeAreaProvider>
+    <AuthContext.Provider value={{ user, setUser }}>
+      <NavigationContainer>
+        <AppNavigator />
+      </NavigationContainer>
+    </AuthContext.Provider>
   );
 }
