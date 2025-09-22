@@ -1,0 +1,13 @@
+# Dependencies
+node_modules/
+.env
+*.pyc
+__pycache__/
+.DS_Store
+
+# React Native
+ios/Pods/
+android/app/build/
+
+# Docker
+*.log
