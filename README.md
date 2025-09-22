@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 🎮 PUBG Esports Platform
 
 A full-stack esports platform built for **PUBG tournaments** with future support for other games (Valorant, Free Fire, COD, Dota).  
@@ -101,3 +102,6 @@ This project manages tournaments, tokens, leaderboards, AI fairness tools, live 
 
 ## 📜 License
 This project is licensed under the **MIT License**
+=======
+# Esports_Platform
+>>>>>>> 16e7c70ae0a0ee086403abfbfa9b5fa7c87e1e80
